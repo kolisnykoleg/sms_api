@@ -63,6 +63,7 @@ $app->add(new HttpBasicAuthentication([
     'path' => [
         '/admin',
         '/user',
+        '/message',
     ],
     'users' => [
         'admin' => 'admin',
@@ -80,6 +81,13 @@ $app->group('/user', function (Group $group) {
     $group->post('/procedure/create', User::class . ':createProcedure');
     $group->get('/procedure/delete/{id:[0-9]+}', User::class . ':deleteProcedure');
     $group->get('/procedure/list/{user_id:[0-9]+}', User::class . ':getProcedureList');
+});
+
+$app->group('/message', function (Group $group) {
+    $group->get('/pending', Message::class . ':pending');
+    $group->get('/sent', Message::class . ':sent');
+    $group->get('/received', Message::class . ':received');
+    $group->get('/delete/pending/{id:[0-9]+}', Message::class . ':deletePending');
 });
 
 $app->run();

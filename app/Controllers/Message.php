@@ -34,4 +34,31 @@ class Message
         $response->getBody()->write("Send message {$data['message']} to {$data['phone']}\n");
         return $response;
     }
+
+    public function deletePending(Request $request, Response $response, $args): Response
+    {
+        $this->message->deletePending($args['id']);
+        return $response;
+    }
+
+    public function pending(Request $request, Response $response): Response
+    {
+        $messages = $this->message->pendingList();
+        $response->getBody()->write(json_encode($messages));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function sent(Request $request, Response $response): Response
+    {
+        $messages = $this->message->sentList();
+        $response->getBody()->write(json_encode($messages));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public function received(Request $request, Response $response): Response
+    {
+        $messages = $this->message->receivedList();
+        $response->getBody()->write(json_encode($messages));
+        return $response->withHeader('Content-Type', 'application/json');
+    }
 }
