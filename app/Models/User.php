@@ -59,6 +59,16 @@ class User
         ]);
     }
 
+    public function find(array $params): array
+    {
+        $sql = 'SELECT * FROM users WHERE ' . join(' AND ', array_map(function ($key) {
+                return "$key = :$key";
+            }, array_keys($params)));
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
     public function generateApiKey(): string
     {
         return bin2hex(random_bytes(8));

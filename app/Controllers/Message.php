@@ -20,9 +20,17 @@ class Message
         $this->user = $user;
     }
 
-    public function sms(Request $request, Response $response)
+    public function sms(Request $request, Response $response): Response
     {
-        $data = $data = $request->getParsedBody();
+        $data = $request->getParsedBody();
+        $apiKey = $request->getHeader('X-Auth')[0];
+        $user = $this->user->find(['api_key' => $apiKey])[0];
+        $messageId = $this->message->sendSMS($data);
+        $this->message->save([
+            'user_id' => $user['id'],
+            'message_id' => $messageId,
+            'type' => 'outbox',
+        ]);
         $response->getBody()->write("Send message {$data['message']} to {$data['phone']}\n");
         return $response;
     }
