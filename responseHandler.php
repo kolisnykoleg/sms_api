@@ -32,12 +32,12 @@ $db = new PDO('sqlite:' . __DIR__ . '/db.sqlite', null, null, [
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
 
-# Find outbox message
+# Find sent message
 $stmt = $db->prepare('
-SELECT um.user_id, um.message_id, o.TextDecoded message
+SELECT um.user_id, um.message_id, s.TextDecoded message
 FROM users_messages um
-JOIN outbox o ON um.message_id = o.ID
-WHERE o.DestinationNumber = :sender
+JOIN sentitems s ON um.message_id = s.ID
+WHERE s.DestinationNumber = :sender
 ORDER BY um.message_id DESC
 ');
 $stmt->execute(['sender' => $sender]);
