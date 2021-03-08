@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use DI\Container;
 use Slim\Factory\AppFactory;
@@ -54,7 +54,7 @@ $app->group('/api', function (Group $group) {
         $stmt->execute([
             'api_key' => $apiKey,
         ]);
-        return (bool) count($stmt->fetchAll());
+        return (bool)count($stmt->fetchAll());
     },
     'secure' => false,
 ]));

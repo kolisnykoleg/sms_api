@@ -12,13 +12,11 @@ class Admin
 {
     public function __construct(ContainerInterface $container)
     {
-        
     }
 
     public function index(Request $request, Response $response): Response
     {
-        $html = file_get_contents(__DIR__ . '/../../index.html');
-        $response->getBody()->write($html);
+        readfile(__DIR__ . '/../../index.html');
         return $response;
     }
 }

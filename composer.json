@@ -11,6 +11,7 @@
         "ext-pdo_sqlite": "*",
         "ext-json": "*",
         "tuupola/slim-basic-auth": "^3.3",
-        "madesimple/slim-auth": "^2.0"
+        "madesimple/slim-auth": "^2.0",
+        "phpmailer/phpmailer": "^6.3"
     }
 }

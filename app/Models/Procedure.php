@@ -17,13 +17,12 @@ class Procedure
     public function create(array $data): int
     {
         $stmt = $this->db->prepare('
-            INSERT INTO procedures (type, recipient, message, user_id)
-            VALUES (:type, :recipient, :message, :user_id)
+            INSERT INTO procedures (type, recipient, user_id)
+            VALUES (:type, :recipient, :user_id)
         ');
         $stmt->execute([
             'type' => $data['type'],
             'recipient' => $data['recipient'],
-            'message' => $data['message'],
             'user_id' => $data['user_id'],
         ]);
         return $this->db->lastInsertId();

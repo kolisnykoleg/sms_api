@@ -12,6 +12,7 @@ use App\Models\Procedure as ProcedureModel;
 class User
 {
     private UserModel $user;
+    private ProcedureModel $procedure;
 
     public function __construct(ContainerInterface $container, UserModel $user, ProcedureModel $procedure)
     {
