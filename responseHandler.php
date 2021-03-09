@@ -13,7 +13,7 @@ l("[ " . date('Y-m-d H:i:s') . " ]\n");
 # Get sms data
 $sender = getenv('SMS_1_NUMBER');
 if ($sender) {
-    $sender = preg_replace('/\D/', '', $sender);
+    $sender = substr($sender, -9);
 }
 $numParts = getenv('DECODED_PARTS');
 if ($numParts) {
@@ -37,10 +37,10 @@ $stmt = $db->prepare('
 SELECT um.user_id, um.message_id, s.TextDecoded message
 FROM users_messages um
 JOIN sentitems s ON um.message_id = s.ID
-WHERE s.DestinationNumber = :sender
+WHERE s.DestinationNumber LIKE :sender
 ORDER BY um.message_id DESC
 ');
-$stmt->execute(['sender' => $sender]);
+$stmt->execute(['sender' => "%$sender"]);
 $outbox = $stmt->fetch();
 if ($outbox) {
     l(json_encode($outbox) . "\n");

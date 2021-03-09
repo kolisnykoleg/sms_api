@@ -23,7 +23,6 @@ class Message
     public function sms(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
-        $data['phone'] = preg_replace('/\D/', '', $data['phone']);
         $apiKey = $request->getHeader('X-Auth')[0];
         $user = $this->user->find(['api_key' => $apiKey])[0];
         $messageId = $this->message->sendSMS($data);

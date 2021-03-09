@@ -23,7 +23,6 @@ class User
     public function create(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
-        $data['phone'] = preg_replace('/\D/', '', $data['phone']);
         $data['api_key'] = $this->user->generateApiKey();
         $userId = $this->user->create($data);
         $response->getBody()->write(json_encode([
