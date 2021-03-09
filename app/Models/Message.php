@@ -70,7 +70,6 @@ class Message
                 s.ID id,
                 u.phone sender,
                 s.DestinationNumber recipient,
-                s.UDH udh,
                 s.TextDecoded message,
                 s.SendingDateTime date,
                 s.Status status

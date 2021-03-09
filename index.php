@@ -8,6 +8,8 @@ use Slim\Interfaces\RouteCollectorProxyInterface as Group;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Tuupola\Middleware\HttpBasicAuthentication;
 use Slim\Middleware\Authentication\SimpleTokenAuthentication;
 use App\Controllers\User;
@@ -30,7 +32,19 @@ $container->set('userModel', new UserModel($container));
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
-$app->addErrorMiddleware(true, false, false);
+$errorMiddleware = $app->addErrorMiddleware(true, false, false);
+$errorMiddleware->setDefaultErrorHandler(function (
+    ServerRequestInterface $request,
+    Throwable $exception,
+    bool $displayErrorDetails,
+    bool $logErrors,
+    bool $logErrorDetails,
+    ?LoggerInterface $logger = null
+) use ($app) {
+    $response = $app->getResponseFactory()->createResponse();
+    $response->getBody()->write($exception->getMessage());
+    return $response->withStatus(500);
+});
 
 $app->add(function (Request $request, RequestHandler $handler) {
     $contentType = $request->getHeaderLine('Content-Type');

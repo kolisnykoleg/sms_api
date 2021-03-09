@@ -23,6 +23,7 @@ class User
     public function create(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
+        $this->checkPhone($data['phone']);
         $data['api_key'] = $this->user->generateApiKey();
         $userId = $this->user->create($data);
         $response->getBody()->write(json_encode([
@@ -35,6 +36,7 @@ class User
     public function update(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
+        $this->checkPhone($data['phone']);
         $this->user->update($data);
         return $response;
     }
@@ -55,6 +57,9 @@ class User
     public function createProcedure(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
+        if ($data['type'] == 'sms') {
+            $this->checkPhone($data['recipient']);
+        }
         $procedureId = $this->procedure->create($data);
         $response->getBody()->write(json_encode(['id' => $procedureId]));
         return $response->withHeader('Content-Type', 'application/json');
@@ -71,5 +76,12 @@ class User
         $procedureList = $this->procedure->findByUser($args['user_id']);
         $response->getBody()->write(json_encode($procedureList));
         return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    private function checkPhone($phone)
+    {
+        if (!$this->user->checkPhone($phone)) {
+            throw new \Exception('Wrong phone number format');
+        }
     }
 }

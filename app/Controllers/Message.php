@@ -23,16 +23,27 @@ class Message
     public function sms(Request $request, Response $response): Response
     {
         $data = $request->getParsedBody();
-        $apiKey = $request->getHeader('X-Auth')[0];
-        $user = $this->user->find(['api_key' => $apiKey])[0];
-        $messageId = $this->message->sendSMS($data);
-        $this->message->save([
-            'user_id' => $user['id'],
-            'message_id' => $messageId,
-            'type' => 'outbox',
-        ]);
-        $response->getBody()->write("Send message {$data['message']} to {$data['phone']}\n");
-        return $response;
+        if ($this->user->checkPhone($data['phone'])) {
+            $apiKey = $request->getHeader('X-Auth')[0];
+            $user = $this->user->find(['api_key' => $apiKey])[0];
+            $messageId = $this->message->sendSMS($data);
+            $this->message->save([
+                'user_id' => $user['id'],
+                'message_id' => $messageId,
+                'type' => 'outbox',
+            ]);
+            $responseData = [
+                'success' => true,
+                'text' => 'Message has been successfully sent',
+            ];
+        } else {
+            $responseData = [
+                'success' => false,
+                'text' => 'Wrong phone number format',
+            ];
+        }
+        $response->getBody()->write(json_encode($responseData));
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     public function deletePending(Request $request, Response $response, $args): Response

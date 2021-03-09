@@ -80,4 +80,9 @@ class User
     {
         return bin2hex(random_bytes(8));
     }
+
+    public function checkPhone($phone): bool
+    {
+        return preg_match('/^\+[1-9]\d{4,14}/', $phone);
+    }
 }

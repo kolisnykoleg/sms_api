@@ -12,9 +12,6 @@ l("[ " . date('Y-m-d H:i:s') . " ]\n");
 
 # Get sms data
 $sender = getenv('SMS_1_NUMBER');
-if ($sender) {
-    $sender = substr($sender, -9);
-}
 $numParts = getenv('DECODED_PARTS');
 if ($numParts) {
     $message = '';
@@ -34,11 +31,16 @@ $db = new PDO('sqlite:' . __DIR__ . '/db.sqlite', null, null, [
 
 # Find sent message
 $stmt = $db->prepare('
-SELECT um.user_id, um.message_id, s.TextDecoded message
+SELECT 
+    um.user_id,
+    um.message_id,
+    group_concat(s.TextDecoded, "") message
 FROM users_messages um
 JOIN sentitems s ON um.message_id = s.ID
-WHERE s.DestinationNumber LIKE :sender
-ORDER BY um.message_id DESC
+WHERE um.message_id IN (
+    SELECT MAX(ID) FROM sentitems
+    WHERE DestinationNumber LIKE :sender
+)
 ');
 $stmt->execute(['sender' => "%$sender"]);
 $outbox = $stmt->fetch();
