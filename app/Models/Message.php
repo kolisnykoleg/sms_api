@@ -70,12 +70,14 @@ class Message
                 s.ID id,
                 u.phone sender,
                 s.DestinationNumber recipient,
+                s.UDH udh,
                 s.TextDecoded message,
                 s.SendingDateTime date,
                 s.Status status
             FROM sentitems s
             JOIN users_messages um ON s.ID = um.message_id
             JOIN users u ON um.user_id = u.id
+            ORDER BY id DESC
         ');
         return $stmt->fetchAll();
     }
@@ -89,6 +91,7 @@ class Message
                 i.TextDecoded message,
                 i.ReceivingDateTime date
             FROM inbox i
+            ORDER BY id DESC
         ');
         return $stmt->fetchAll();
     }
