@@ -25,13 +25,14 @@ class User
     public function create(array $data): int
     {
         $stmt = $this->db->prepare('
-            INSERT INTO users (email, phone, api_key)
-            VALUES (:email, :phone, :api_key)
+            INSERT INTO users (email, phone, api_key, description)
+            VALUES (:email, :phone, :api_key, :description)
         ');
         $stmt->execute([
             'email' => $data['email'],
             'phone' => $data['phone'],
             'api_key' => $data['api_key'],
+            'description' => $data['description'],
         ]);
         return $this->db->lastInsertId();
     }
@@ -39,12 +40,18 @@ class User
     public function update(array $data)
     {
         $stmt = $this->db->prepare('
-            UPDATE users SET email = :email, phone = :phone, api_key = :api_key WHERE id = :id
+            UPDATE users SET
+                email = :email,
+                phone = :phone,
+                api_key = :api_key,
+                description = :description
+            WHERE id = :id
         ');
         $stmt->execute([
             'email' => $data['email'],
             'phone' => $data['phone'],
             'api_key' => $data['api_key'],
+            'description' => $data['description'],
             'id' => $data['id'],
         ]);
     }
